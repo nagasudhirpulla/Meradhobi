@@ -40,6 +40,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	private static final int RC_SIGN_IN = 0;
 	private static final String TAG = "GoogleLogin";
 	private TextView txt;
+	private String Id;
 	// Google client to interact with Google API
 	private GoogleApiClient mGoogleApiClient;
 
@@ -81,7 +82,6 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		} else {
 			menuItemLogOut.setEnabled(false).setVisible(false);
 		}
-		menu.findItem(R.id.log_in).setEnabled(false).setVisible(false);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -193,6 +193,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 				String personPhotoUrl = currentPerson.getImage().getUrl();
 				String personGooglePlusProfile = currentPerson.getUrl();
 				String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+				Id = currentPerson.getId();
 
 				Log.e(TAG, "Name: " + personName + ", plusProfile: "
 						+ personGooglePlusProfile + ", email: " + email
@@ -228,18 +229,22 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			btnRevokeAccess.setVisibility(View.VISIBLE);
 			llProfileLayout.setVisibility(View.VISIBLE);*/
 
-			//Set the textVIew to Logged_In
-			txt.setText("Logged_In");
 			SignedIn = true;
 			this.invalidateOptionsMenu();
+			//Send the User to the next screen with the apiclient
+			Intent intent = new Intent(getApplicationContext(), UserActivity.class);
+			Bundle b = new Bundle();
+			b.putString("Id", Id);
+			b.putString("Account", "Google");
+			intent.putExtras(b); //Put your id to your next Intent
+			startActivity(intent);
+			finish();
 		} else {
 			/*btnSignIn.setVisibility(View.VISIBLE);
 			btnSignOut.setVisibility(View.GONE);
 			btnRevokeAccess.setVisibility(View.GONE);
 			llProfileLayout.setVisibility(View.GONE);*/
 
-			//Set the textVIew to Logged_Off
-			txt.setText("Logged_Off");
 			SignedIn = false;
 			this.invalidateOptionsMenu();
 		}
