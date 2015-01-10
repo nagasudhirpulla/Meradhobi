@@ -12,24 +12,29 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class SelectionActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener{
+public class SelectionActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener,SelectionFragment.OnFragmentListener{
 
 	/* Track whether the sign-in button has been clicked so that we know to resolve
 	 * all issues preventing sign-in without waiting.
@@ -39,7 +44,6 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	private boolean SignedIn;
 	private static final int RC_SIGN_IN = 0;
 	private static final String TAG = "GoogleLogin";
-	private TextView txt;
 	private String Id;
 	// Google client to interact with Google API
 	private GoogleApiClient mGoogleApiClient;
@@ -56,14 +60,31 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		getActionBar().setDisplayShowHomeEnabled(true);
 		getActionBar().setIcon(R.drawable.ic_launcher);
 
-		txt = (TextView)findViewById(R.id.textView1);
+		// Check that the activity is using the layout version with
+		// the fragment_container FrameLayout
+		if (findViewById(R.id.fragment_container) != null) {
+
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (savedInstanceState != null) {
+				return;
+			}
+
+			// Create a new Fragment to be placed in the activity layout
+			SelectionFragment firstFragment = new SelectionFragment();
+
+			// Add the fragment to the 'fragment_container' FrameLayout
+			getFragmentManager().beginTransaction()
+			.add(R.id.fragment_container, firstFragment).commit();
+		}
 		SignedIn = false;
 
 		mGoogleApiClient = new GoogleApiClient.Builder(this)
 		.addConnectionCallbacks(this)
 		.addOnConnectionFailedListener(this).addApi(Plus.API)
 		.addScope(Plus.SCOPE_PLUS_LOGIN).build();
-		findViewById(R.id.btn_sign_in).setOnClickListener(this);
+		//findViewById(R.id.btn_sign_in).setOnClickListener(this);
 	}
 
 
@@ -258,6 +279,12 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		updateUI(false);
 
 	}
+	
+	public void FragmentCall(int position) {
+        // The user selected the headline of an article from the HeadlinesFragment
+        // Do something here to display that article
+		signInWithGplus();
+    }
 
 
 	@Override
