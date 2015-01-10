@@ -1,6 +1,18 @@
 package com.example.administrator.meradhobi;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -21,7 +33,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,6 +63,8 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	 * resolve them when the user clicks sign-in.
 	 */
 	private ConnectionResult mConnectionResult;
+
+	private boolean isNewUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -251,15 +264,21 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			llProfileLayout.setVisibility(View.VISIBLE);*/
 
 			SignedIn = true;
-			this.invalidateOptionsMenu();
+			this.invalidateOptionsMenu();			
+			isNewUser = true;
+			LoadProfAsyncTask tsk = new LoadProfAsyncTask();
+			tsk.execute(Id);
+
 			//Send the User to the next screen with the apiclient
-			Intent intent = new Intent(getApplicationContext(), UserActivity.class);
+			/*Intent intent = new Intent(getApplicationContext(), UserActivity.class);
 			Bundle b = new Bundle();
 			b.putString("Id", Id);
 			b.putString("Account", "Google");
 			intent.putExtras(b); //Put your id to your next Intent
 			startActivity(intent);
-			finish();
+			finish();*/
+
+
 		} else {
 			/*btnSignIn.setVisibility(View.VISIBLE);
 			btnSignOut.setVisibility(View.GONE);
@@ -279,12 +298,12 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		updateUI(false);
 
 	}
-	
+
 	public void FragmentCall(int position) {
-        // The user selected the headline of an article from the HeadlinesFragment
-        // Do something here to display that article
+		// The user selected the headline of an article from the HeadlinesFragment
+		// Do something here to display that article
 		signInWithGplus();
-    }
+	}
 
 
 	@Override
@@ -373,6 +392,130 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		protected void onPostExecute(Bitmap result) {
 			bmImage.setImageBitmap(result);
 		}
+	}
+	
+	private void addnew() {
+		new AddProfAsyncTask().execute(Id);
+		
+	}
+
+	public class LoadProfAsyncTask extends AsyncTask<String, Void, String>{
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			try 
+			{			
+				String Id = arg0[0];
+
+				QueryBuilder qb = new QueryBuilder();						
+
+				/*HttpClient httpClient = new DefaultHttpClient();
+
+				HttpGet request = new HttpGet(qb.checkContact(Id));
+
+				HttpResponse response = httpClient.execute(request);*/
+				
+				URL obj = new URL(qb.checkContact(Id));
+				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		 
+				// optional default is GET
+				con.setRequestMethod("GET");
+		 
+				//add request header
+				con.setRequestProperty("content-type", "application/json");
+		 
+				int responseCode = con.getResponseCode();
+
+				if(con.getResponseCode()<205)
+				{
+					BufferedReader in = new BufferedReader(
+					        new InputStreamReader(con.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+			 
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					in.close();
+					return response.toString();
+				}
+				else
+				{
+					return null;
+				}
+			} catch (Exception e) {
+				//e.getCause();
+				String val = e.getMessage();
+				String val2 = val;
+				return null;
+			}
+
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(result==null)
+			{
+				Toast.makeText(getApplicationContext(), "NewUser!!!", Toast.LENGTH_SHORT).show();
+				//Take the Person to the Profile Fill Fragment
+				//For now lets just add him
+				addnew();				
+			}
+			else
+			{
+				Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+
+			}
+		}
+
+	}
+	
+	public class AddProfAsyncTask extends AsyncTask<String, Void, Integer>{
+
+		@Override
+		protected Integer doInBackground(String... arg0) {
+			try 
+			{			
+				String Id = arg0[0];				
+				QueryBuilder qb = new QueryBuilder();
+				HttpClient httpClient = new DefaultHttpClient();
+				StringEntity params =new StringEntity(qb.createContact(Id));
+				HttpPost request = new HttpPost(qb.buildContactsSaveURL());
+				request.addHeader("content-type", "application/json");
+				request.setEntity(params);
+				HttpResponse response = httpClient.execute(request);	
+				if(response.getStatusLine().getStatusCode()<205)
+				{
+					return 2;
+				}
+				else
+				{
+					return response.getStatusLine().getStatusCode();
+				}
+			} catch (Exception e) {
+				//e.getCause();
+				String val = e.getMessage();
+				String val2 = val;
+				return 0;
+			}
+
+		}
+		@Override
+		protected void onPostExecute(Integer result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(result==2)
+			{
+				Toast.makeText(getApplicationContext(), "NewUser Added!!!", Toast.LENGTH_SHORT).show();
+			}
+			else
+			{
+
+			}
+		}
+
 	}
 
 }
