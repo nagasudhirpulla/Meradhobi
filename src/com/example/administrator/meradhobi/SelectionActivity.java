@@ -1,22 +1,11 @@
 package com.example.administrator.meradhobi;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -26,22 +15,19 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -98,6 +84,12 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		.addOnConnectionFailedListener(this).addApi(Plus.API)
 		.addScope(Plus.SCOPE_PLUS_LOGIN).build();
 		//findViewById(R.id.btn_sign_in).setOnClickListener(this);
+		//In order to avoid network android.os.Network error for making connections from Main Activity
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+			StrictMode.setThreadPolicy(policy);
+		}
+
 	}
 
 
@@ -132,7 +124,13 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			signOutFromGplus();
 			return true;
 		}
-		return super.onOptionsItemSelected(item);
+		else if(id == R.id.revoke)
+		{
+			revokeGplusAccess();
+			return true;
+		}
+		else
+			return super.onOptionsItemSelected(item);
 	}
 
 	protected void onStart() {
@@ -207,18 +205,25 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
 		// Get user's information
-		getProfileInformation();
-
-		// Update the UI after signin
-		updateUI(true);
+		if(getProfileInformation())
+		{
+			// Update the UI after signin
+			updateUI(true);			
+		}
+		else
+		{
+			Toast.makeText(this, "Unable to get User Info, Login once again...", Toast.LENGTH_LONG).show();
+			signOutFromGplus();
+		}		
 
 	}
 
 
 	/**
 	 * Fetching user's information name, email, profile pic
+	 * @return 
 	 * */
-	private void getProfileInformation() {
+	private boolean getProfileInformation() {
 		try {
 			if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
 				Person currentPerson = Plus.PeopleApi
@@ -232,7 +237,6 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 				Log.e(TAG, "Name: " + personName + ", plusProfile: "
 						+ personGooglePlusProfile + ", email: " + email
 						+ ", Image: " + personPhotoUrl);
-
 				/*txtName.setText(personName);
 				txtEmail.setText(email);*/
 
@@ -244,14 +248,18 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 						+ PROFILE_PIC_SIZE;
 
 				new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);*/
+				return true;
 
 			} else {
+
 				Toast.makeText(getApplicationContext(),
 						"Person information is null", Toast.LENGTH_LONG).show();
+				return false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 
 	}
 
@@ -262,7 +270,6 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			btnSignOut.setVisibility(View.VISIBLE);
 			btnRevokeAccess.setVisibility(View.VISIBLE);
 			llProfileLayout.setVisibility(View.VISIBLE);*/
-
 			SignedIn = true;
 			this.invalidateOptionsMenu();			
 			isNewUser = true;
@@ -393,127 +400,57 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			bmImage.setImageBitmap(result);
 		}
 	}
-	
-	private void addnew() {
+
+	private void addNewUser() {
 		new AddProfAsyncTask().execute(Id);
-		
 	}
 
-	public class LoadProfAsyncTask extends AsyncTask<String, Void, String>{
+	public class LoadProfAsyncTask extends AsyncTask<String, Void, JSONObject>{
 
 		@Override
-		protected String doInBackground(String... arg0) {
-			try 
-			{			
-				String Id = arg0[0];
-
-				QueryBuilder qb = new QueryBuilder();						
-
-				/*HttpClient httpClient = new DefaultHttpClient();
-
-				HttpGet request = new HttpGet(qb.checkContact(Id));
-
-				HttpResponse response = httpClient.execute(request);*/
-				
-				URL obj = new URL(qb.checkContact(Id));
-				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		 
-				// optional default is GET
-				con.setRequestMethod("GET");
-		 
-				//add request header
-				con.setRequestProperty("content-type", "application/json");
-		 
-				int responseCode = con.getResponseCode();
-
-				if(con.getResponseCode()<205)
-				{
-					BufferedReader in = new BufferedReader(
-					        new InputStreamReader(con.getInputStream()));
-					String inputLine;
-					StringBuffer response = new StringBuffer();
-			 
-					while ((inputLine = in.readLine()) != null) {
-						response.append(inputLine);
-					}
-					in.close();
-					return response.toString();
-				}
-				else
-				{
-					return null;
-				}
-			} catch (Exception e) {
-				//e.getCause();
-				String val = e.getMessage();
-				String val2 = val;
-				return null;
-			}
-
+		protected JSONObject doInBackground(String... arg0) {
+			String Id = arg0[0];						
+			/*MongoLabDB db = new MongoLabDB("dhobi_base_1", "nxslG9WNoFOHU38iB9OmGqxndQx7AfiL");
+			return db.getCollection("userBase").findOne("q={\"Id\":\"113669339194963770872\"}");*/
+			return DhobiDBHelper.lookForUser(new String[]{"Id","113669339194963770872"});
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(JSONObject result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			if(result==null)
 			{
+				isNewUser = false;
 				Toast.makeText(getApplicationContext(), "NewUser!!!", Toast.LENGTH_SHORT).show();
 				//Take the Person to the Profile Fill Fragment
 				//For now lets just add him
-				addnew();				
+				addNewUser();				
 			}
 			else
 			{
-				Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+				isNewUser = false;
+				//Take to the next screen				
+				Toast.makeText(getApplicationContext(), "ExistingUser!!!"+result.toString(), Toast.LENGTH_SHORT).show();
 
 			}
 		}
 
 	}
-	
-	public class AddProfAsyncTask extends AsyncTask<String, Void, Integer>{
+
+	public class AddProfAsyncTask extends AsyncTask<String, Void, String>{
 
 		@Override
-		protected Integer doInBackground(String... arg0) {
-			try 
-			{			
-				String Id = arg0[0];				
-				QueryBuilder qb = new QueryBuilder();
-				HttpClient httpClient = new DefaultHttpClient();
-				StringEntity params =new StringEntity(qb.createContact(Id));
-				HttpPost request = new HttpPost(qb.buildContactsSaveURL());
-				request.addHeader("content-type", "application/json");
-				request.setEntity(params);
-				HttpResponse response = httpClient.execute(request);	
-				if(response.getStatusLine().getStatusCode()<205)
-				{
-					return 2;
-				}
-				else
-				{
-					return response.getStatusLine().getStatusCode();
-				}
-			} catch (Exception e) {
-				//e.getCause();
-				String val = e.getMessage();
-				String val2 = val;
-				return 0;
-			}
+		protected String doInBackground(String... arg0) {
+			String Id = arg0[0];
+			return DhobiDBHelper.signupUser(Id);
 
 		}
 		@Override
-		protected void onPostExecute(Integer result) {
+		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			if(result==2)
-			{
-				Toast.makeText(getApplicationContext(), "NewUser Added!!!", Toast.LENGTH_SHORT).show();
-			}
-			else
-			{
-
-			}
+			Toast.makeText(getApplicationContext(), "UserAdded!!!"+result, Toast.LENGTH_SHORT).show();			
 		}
 
 	}
