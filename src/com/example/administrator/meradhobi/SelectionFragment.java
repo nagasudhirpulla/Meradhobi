@@ -32,6 +32,7 @@ public class SelectionFragment extends Fragment implements OnClickListener {
     @Override
     public void onViewCreated(View view, Bundle bundle) {
         SignInButton signInButton = (SignInButton) view.findViewById(R.id.btn_sign_in);
+        view.findViewById(R.id.guest_button).setOnClickListener(this);
         signInButton.setOnClickListener(this);
     }
     
@@ -82,6 +83,10 @@ public class SelectionFragment extends Fragment implements OnClickListener {
 		if(v.getId() == R.id.btn_sign_in)
 		{
 			mCallback.FragmentCall(1);			
-		}		
+		}
+		else if(v.getId() == R.id.guest_button)
+		{
+			mCallback.FragmentCall(2);
+		}
 	}
 }

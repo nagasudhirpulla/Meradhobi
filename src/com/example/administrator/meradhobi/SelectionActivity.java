@@ -15,6 +15,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.graphics.Bitmap;
@@ -31,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-public class SelectionActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener,SelectionFragment.OnFragmentListener{
+public class SelectionActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener,SelectionFragment.OnFragmentListener, AddressFragment.OnAddressFragmentListener{
 
 	/* Track whether the sign-in button has been clicked so that we know to resolve
 	 * all issues preventing sign-in without waiting.
@@ -42,6 +43,9 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	private static final int RC_SIGN_IN = 0;
 	private static final String TAG = "GoogleLogin";
 	private String Id;
+	private String personName = null;
+	private String email;
+	String personPhotoUrl;
 	// Google client to interact with Google API
 	private GoogleApiClient mGoogleApiClient;
 
@@ -103,10 +107,17 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		MenuItem menuItemLogOut = menu.findItem(R.id.log_out);
+		MenuItem menuItemProfile = menu.findItem(R.id.user_profile);
+		MenuItem menuItemOrders = menu.findItem(R.id.orderlog);
 		if (SignedIn) {
 			menuItemLogOut.setEnabled(true).setVisible(true);
+			menuItemProfile.setEnabled(true).setVisible(true);
+			menuItemProfile.setTitle(personName);
+			menuItemOrders.setEnabled(true).setVisible(true);
 		} else {
 			menuItemLogOut.setEnabled(false).setVisible(false);
+			menuItemProfile.setEnabled(false).setVisible(false);
+			menuItemOrders.setEnabled(false).setVisible(false);
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -122,11 +133,6 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		}
 		else if (id == R.id.log_out) {
 			signOutFromGplus();
-			return true;
-		}
-		else if(id == R.id.revoke)
-		{
-			revokeGplusAccess();
 			return true;
 		}
 		else
@@ -228,10 +234,10 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
 				Person currentPerson = Plus.PeopleApi
 						.getCurrentPerson(mGoogleApiClient);
-				String personName = currentPerson.getDisplayName();
-				String personPhotoUrl = currentPerson.getImage().getUrl();
+				personName = currentPerson.getDisplayName();
+				personPhotoUrl = currentPerson.getImage().getUrl();
 				String personGooglePlusProfile = currentPerson.getUrl();
-				String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+				email = Plus.AccountApi.getAccountName(mGoogleApiClient);
 				Id = currentPerson.getId();
 
 				Log.e(TAG, "Name: " + personName + ", plusProfile: "
@@ -292,6 +298,17 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			btnRevokeAccess.setVisibility(View.GONE);
 			llProfileLayout.setVisibility(View.GONE);*/
 
+			//Take to Login Screen
+			// Create a new Fragment to be placed in the activity layout
+			SelectionFragment firstFragment = new SelectionFragment();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			
+			// Replace whatever is in the fragment_container view with this fragment,
+			// and add the transaction to the back stack so the user can navigate back
+			transaction.replace(R.id.fragment_container, firstFragment);
+			//transaction.addToBackStack(null);
+			// Commit the transaction
+			transaction.commit();
 			SignedIn = false;
 			this.invalidateOptionsMenu();
 		}
@@ -306,10 +323,37 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 
 	}
 
-	public void FragmentCall(int position) {
+	public void FragmentCall(int callcode) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		// Do something here to display that article
-		signInWithGplus();
+		switch(callcode)
+		{
+		case 1:
+			signInWithGplus();
+			break;
+		case 2:
+			signInGuest();
+			break;
+		case 3:
+			takeToOrderDetail();
+			break;
+		default:
+			break;
+		}
+
+	}
+
+
+	private void takeToOrderDetail() {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	private void signInGuest() {
+		//Replace the current fragment with city Selection fragment
+		takeToFillAddress();
+
 	}
 
 
@@ -402,7 +446,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	}
 
 	private void addNewUser() {
-		new AddProfAsyncTask().execute(Id);
+		new AddProfAsyncTask().execute(Id, email, personName);
 	}
 
 	public class LoadProfAsyncTask extends AsyncTask<String, Void, JSONObject>{
@@ -412,7 +456,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			String Id = arg0[0];						
 			/*MongoLabDB db = new MongoLabDB("dhobi_base_1", "nxslG9WNoFOHU38iB9OmGqxndQx7AfiL");
 			return db.getCollection("userBase").findOne("q={\"Id\":\"113669339194963770872\"}");*/
-			return DhobiDBHelper.lookForUser(new String[]{"Id","113669339194963770872"});
+			return DhobiDBHelper.lookForUser(new String[]{"Id",Id});
 		}
 
 		@Override
@@ -425,14 +469,15 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 				Toast.makeText(getApplicationContext(), "NewUser!!!", Toast.LENGTH_SHORT).show();
 				//Take the Person to the Profile Fill Fragment
 				//For now lets just add him
-				addNewUser();				
+				addNewUser();
+				//Now Can take him to his profile edit screen.
 			}
 			else
 			{
 				isNewUser = false;
 				//Take to the next screen				
 				Toast.makeText(getApplicationContext(), "ExistingUser!!!"+result.toString(), Toast.LENGTH_SHORT).show();
-
+				takeToFillAddress();
 			}
 		}
 
@@ -443,15 +488,33 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		@Override
 		protected String doInBackground(String... arg0) {
 			String Id = arg0[0];
-			return DhobiDBHelper.signupUser(Id);
-
+			String email = arg0[1];
+			String personName = arg0[2];
+			return DhobiDBHelper.signupUser(Id, email, personName);
 		}
+
 		@Override
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			Toast.makeText(getApplicationContext(), "UserAdded!!!"+result, Toast.LENGTH_SHORT).show();			
 		}
+
+	}
+
+	void takeToFillAddress(){
+
+		AddressFragment newFragment = new AddressFragment();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		Bundle args = new Bundle();
+		args.putString(AddressFragment.ARG_NAME, personName);
+		newFragment.setArguments(args);
+		// Replace whatever is in the fragment_container view with this fragment,
+		// and add the transaction to the back stack so the user can navigate back
+		transaction.replace(R.id.fragment_container, newFragment);
+		//transaction.addToBackStack(null);
+		// Commit the transaction
+		transaction.commit();
 
 	}
 

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0C59CF"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Where do you want us to come?"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="24dp"
+        android:text="Name"
+        android:textColor="#ffffff"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/editTextName"
+        android:layout_marginTop="15dp"
+        android:text="State"
+        android:textColor="#ffffff"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/EditTextState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editTextName"
+        android:layout_alignTop="@+id/textView3"
+        android:ems="10"
+        android:textColor="#ffffff" >
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_marginRight="5dp"
+        android:ems="10"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_below="@+id/EditTextState"
+        android:layout_marginTop="15dp"
+        android:text="City"
+        android:textColor="#ffffff"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/EditTextCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editTextName"
+        android:layout_alignTop="@+id/TextView01"
+        android:ems="10"
+        android:textColor="#ffffff" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView01"
+        android:layout_below="@+id/EditTextCity"
+        android:layout_marginTop="15dp"
+        android:text="Address"
+        android:textColor="#ffffff"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/EditText03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editTextName"
+        android:layout_alignTop="@+id/TextView02"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:lines="2"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView02"
+        android:layout_below="@+id/EditText03"
+        android:layout_marginTop="15dp"
+        android:text="PinCode"
+        android:textColor="#ffffff"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/EditText04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editTextName"
+        android:layout_alignTop="@+id/TextView03"
+        android:ems="10"
+        android:inputType="phone"
+        android:textColor="#ffffff" />
+
+    <Button
+        android:id="@+id/place_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView03"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:text="PICK FROM SAVED\nADDRESSES"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:id="@+id/TextView04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView03"
+        android:layout_below="@+id/EditText04"
+        android:layout_marginTop="15dp"
+        android:text="Phone"
+        android:textColor="#ffffff"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/EditText05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editTextName"
+        android:layout_alignTop="@+id/TextView04"
+        android:ems="10"
+        android:inputType="phone"
+        android:textColor="#ffffff" />
+
+    <Button
+        android:id="@+id/address_proceed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/place_order"
+        android:layout_alignRight="@+id/editTextName"
+        android:layout_alignTop="@+id/place_order"
+        android:layout_toRightOf="@+id/place_order"
+        android:text="PROCEED"
+        android:textColor="#ffffff" />
+
+</RelativeLayout>

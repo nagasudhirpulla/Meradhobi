@@ -51,7 +51,7 @@
         android:textColor="#ffffff" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/address_proceed"
         android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
@@ -76,7 +76,7 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button3"
+        android:layout_above="@+id/guest_button"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
         android:text="date???"
@@ -84,7 +84,7 @@
         android:textSize="28sp" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/guest_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

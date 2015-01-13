@@ -7,12 +7,16 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item
+        android:id="@+id/user_profile"
+        android:showAsAction="never"
+        android:title="Dheeraj"/>
+    <item
         android:id="@+id/log_out"
         android:showAsAction="never"
         android:title="LogOut"/>
     <item
-        android:id="@+id/revoke"
+        android:id="@+id/orderlog"
         android:showAsAction="never"
-        android:title="RevokeAccess"/>
+        android:title="Orders"/>
 
 </menu>
