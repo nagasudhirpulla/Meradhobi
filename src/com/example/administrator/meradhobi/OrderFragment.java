@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 
 public class OrderFragment extends Fragment implements OnClickListener {
 
@@ -29,6 +30,9 @@ public class OrderFragment extends Fragment implements OnClickListener {
 
 	@Override
 	public void onViewCreated(View view, Bundle bundle) {
+		PopUpFactory.createPopUp(getActivity(), (EditText) view.findViewById(R.id.editTextName), new String[]{"Formal Pants","City2","City3","City4","City5","City6","City7","City8"});
+		PopUpFactory.createPopUp(getActivity(), (EditText) view.findViewById(R.id.EditTextState), new String[]{"Blouse","City2","City3","City4","City5","City6","City7","City8"});
+		PopUpFactory.createPopUp(getActivity(), (EditText) view.findViewById(R.id.EditTextCity), new String[]{"Bed Sheets","City2","City3","City4","City5","City6","City7","City8"});
 		view.findViewById(R.id.place_order).setOnClickListener(this);
 	}
 

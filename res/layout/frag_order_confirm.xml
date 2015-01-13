@@ -18,7 +18,7 @@
         android:textColor="#ffffff" />
 
     <TextView
-        android:id="@+id/TextView01"
+        android:id="@+id/TextViewProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView2"

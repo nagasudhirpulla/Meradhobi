@@ -32,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-public class SelectionActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener,SelectionFragment.OnFragmentListener, AddressFragment.OnAddressFragmentListener{
+public class SelectionActivity extends Activity implements OnClickListener, ConnectionCallbacks, OnConnectionFailedListener,SelectionFragment.OnFragmentListener, AddressFragment.OnAddressFragmentListener, OrderFragment.OnOrderFragmentListener{
 
 	/* Track whether the sign-in button has been clicked so that we know to resolve
 	 * all issues preventing sign-in without waiting.
@@ -43,7 +43,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	private static final int RC_SIGN_IN = 0;
 	private static final String TAG = "GoogleLogin";
 	private String Id;
-	private String personName = null;
+	private String personName;
 	private String email;
 	String personPhotoUrl;
 	// Google client to interact with Google API
@@ -135,9 +135,32 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			signOutFromGplus();
 			return true;
 		}
+		else if (id == R.id.user_profile) {
+			takeToProfile();
+			return true;
+		}
 		else
 			return super.onOptionsItemSelected(item);
 	}
+
+	private void takeToProfile() {
+		// TODO Auto-generated method stub
+		ProfileFragment newFragment = new ProfileFragment();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		Bundle args = new Bundle();
+		args.putString(ProfileFragment.ARG_NAME, personName);
+		args.putString(ProfileFragment.ARG_EMAIL, email);
+		args.putString(ProfileFragment.ARG_PHONE, "----------");
+		args.putString(ProfileFragment.ARG_P_URL, personPhotoUrl);
+		newFragment.setArguments(args);
+		// Replace whatever is in the fragment_container view with this fragment,
+		// and add the transaction to the back stack so the user can navigate back
+		transaction.add(R.id.fragment_container, newFragment);
+		transaction.addToBackStack(null);
+		// Commit the transaction
+		transaction.commit();
+	}
+
 
 	protected void onStart() {
 		super.onStart();
@@ -302,7 +325,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			// Create a new Fragment to be placed in the activity layout
 			SelectionFragment firstFragment = new SelectionFragment();
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			
+
 			// Replace whatever is in the fragment_container view with this fragment,
 			// and add the transaction to the back stack so the user can navigate back
 			transaction.replace(R.id.fragment_container, firstFragment);
@@ -346,6 +369,14 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 
 	private void takeToOrderDetail() {
 		// TODO Auto-generated method stub
+		OrderFragment newFragment = new OrderFragment();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		// Replace whatever is in the fragment_container view with this fragment,
+		// and add the transaction to the back stack so the user can navigate back
+		transaction.add(R.id.fragment_container, newFragment);
+		transaction.addToBackStack(null);
+		// Commit the transaction
+		transaction.commit();
 
 	}
 
@@ -497,7 +528,8 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			Toast.makeText(getApplicationContext(), "UserAdded!!!"+result, Toast.LENGTH_SHORT).show();			
+			Toast.makeText(getApplicationContext(), "UserAdded!!!"+result, Toast.LENGTH_SHORT).show();
+			takeToFillAddress();
 		}
 
 	}
@@ -512,10 +544,10 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		// Replace whatever is in the fragment_container view with this fragment,
 		// and add the transaction to the back stack so the user can navigate back
 		transaction.replace(R.id.fragment_container, newFragment);
-		//transaction.addToBackStack(null);
+		if(!SignedIn)
+			transaction.addToBackStack(null);
 		// Commit the transaction
 		transaction.commit();
-
 	}
 
 }

@@ -62,7 +62,7 @@
         android:textColor="#ffffff" />
 
     <TextView
-        android:id="@+id/TextView01"
+        android:id="@+id/TextViewProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView3"
@@ -77,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/editTextName"
-        android:layout_alignTop="@+id/TextView01"
+        android:layout_alignTop="@+id/TextViewProfile"
         android:ems="10"
         android:textColor="#ffffff" >
     </EditText>
@@ -86,7 +86,7 @@
         android:id="@+id/TextView02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView01"
+        android:layout_alignLeft="@+id/TextViewProfile"
         android:layout_below="@+id/EditTextCity"
         android:layout_marginTop="15dp"
         android:text="Address"
@@ -105,7 +105,7 @@
         android:textColor="#ffffff" />
 
     <TextView
-        android:id="@+id/TextView03"
+        android:id="@+id/TextViewEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/TextView02"
@@ -120,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/editTextName"
-        android:layout_alignTop="@+id/TextView03"
+        android:layout_alignTop="@+id/TextViewEmail"
         android:ems="10"
         android:inputType="phone"
         android:textColor="#ffffff" />
@@ -129,7 +129,7 @@
         android:id="@+id/place_order"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView03"
+        android:layout_alignLeft="@+id/TextViewEmail"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:text="PICK FROM SAVED\nADDRESSES"
@@ -139,7 +139,7 @@
         android:id="@+id/TextView04"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView03"
+        android:layout_alignLeft="@+id/TextViewEmail"
         android:layout_below="@+id/EditText04"
         android:layout_marginTop="15dp"
         android:text="Phone"

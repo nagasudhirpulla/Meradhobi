@@ -14,7 +14,7 @@ import android.widget.PopupMenu.OnMenuItemClickListener;
 
 public class AddressFragment extends Fragment implements OnClickListener{
 
-	public static String ARG_NAME = "PERSONNAME";
+	public static final String ARG_NAME = "PERSONNAME";
 	private String name = ""; 
 	OnAddressFragmentListener mCallback;
 
@@ -28,11 +28,16 @@ public class AddressFragment extends Fragment implements OnClickListener{
 		if (savedInstanceState != null) {
 
 		}
-		name = getArguments().getString(AddressFragment.ARG_NAME);
-		if(name == null)
-		{
-			name = "";
-		}		
+		Bundle args = getArguments();
+		if (args != null) {
+			// Set article based on argument passed in
+			name = args.getString(ARG_NAME);
+			if(name == null)
+			{
+				name = "";
+			}
+
+		}
 		// Inflate the layout for this fragment
 		return inflater.inflate(R.layout.frag_city_select, container, false);
 	}
@@ -74,11 +79,7 @@ public class AddressFragment extends Fragment implements OnClickListener{
 		// onStart is a good place to do this because the layout has already been
 		// applied to the fragment at this point so we can safely call the method
 		// below that sets the article text.
-		Bundle args = getArguments();
-		if (args != null) {
-			// Set article based on argument passed in
 
-		}
 	}
 
 	@Override
@@ -98,7 +99,7 @@ public class AddressFragment extends Fragment implements OnClickListener{
 
 	private boolean validateForm() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
