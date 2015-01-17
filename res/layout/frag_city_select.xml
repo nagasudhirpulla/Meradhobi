@@ -47,6 +47,7 @@
         android:layout_alignRight="@+id/editTextName"
         android:layout_alignTop="@+id/textView3"
         android:ems="10"
+        android:editable="false"
         android:textColor="#ffffff" >
 
     </EditText>
@@ -59,6 +60,7 @@
         android:layout_alignTop="@+id/textView2"
         android:layout_marginRight="5dp"
         android:ems="10"
+        android:editable="false"
         android:textColor="#ffffff" />
 
     <TextView
@@ -79,6 +81,7 @@
         android:layout_alignRight="@+id/editTextName"
         android:layout_alignTop="@+id/TextViewProfile"
         android:ems="10"
+        android:editable="false"
         android:textColor="#ffffff" >
     </EditText>
 

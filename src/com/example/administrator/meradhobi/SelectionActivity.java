@@ -232,7 +232,9 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	public void onConnected(Bundle arg0) {
 		mSignInClicked = false;
 		Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
-
+		
+		//If we are already connected before this ,just do nothing
+		//Possibly if(signedIn){		
 		// Get user's information
 		if(getProfileInformation())
 		{
