@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/adress_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Name"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_Name_reflect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="40dp"
+        android:layout_toRightOf="@+id/adress_Name"
+        android:text="UserName"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_City"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/adress_Name"
+        android:layout_marginTop="5dp"
+        android:text="City"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_City_reflect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/address_City"
+        android:layout_alignBottom="@+id/address_City"
+        android:layout_alignLeft="@+id/address_Name_reflect"
+        android:text="UserCity"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_State"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/address_City"
+        android:layout_marginTop="5dp"
+        android:text="State"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_State_reflect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/address_State"
+        android:layout_alignBottom="@+id/address_State"
+        android:layout_alignLeft="@+id/address_City_reflect"
+        android:text="UserState"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/address_State"
+        android:layout_marginTop="5dp"
+        android:text="Address"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_address_reflect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/address_address"
+        android:layout_alignBottom="@+id/address_address"
+        android:layout_alignLeft="@+id/address_State_reflect"
+        android:text="UserAddress"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/address_address"
+        android:layout_marginTop="5dp"
+        android:text="PinCode"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_pin_reflect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/address_pin"
+        android:layout_alignBottom="@+id/address_pin"
+        android:layout_alignLeft="@+id/address_address_reflect"
+        android:text="UserPin"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/address_pin"
+        android:layout_marginTop="5dp"
+        android:text="Phone"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/address_phone_reflect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/address_phone"
+        android:layout_alignBottom="@+id/address_phone"
+        android:layout_alignLeft="@+id/address_pin_reflect"
+        android:text="UserPhone"
+        android:textSize="10sp" />
+
+</RelativeLayout>

@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
@@ -47,8 +48,13 @@ public class AddressFragment extends Fragment implements OnClickListener{
 		((EditText)view.findViewById(R.id.editTextName)).setText(name);
 		view.findViewById(R.id.address_proceed).setOnClickListener(this);
 		//Add a Popup memu list for State
-		final EditText state = (EditText) view.findViewById(R.id.EditTextState);
-		PopUpFactory.createPopUp(getActivity(), state, new String[]{"Chandigarh","Haryana"});
+		EditText state = (EditText) view.findViewById(R.id.EditTextState);
+		EditText city = (EditText) view.findViewById(R.id.EditTextCity);
+		EditText name = (EditText) view.findViewById(R.id.editTextName);
+		EditText address = (EditText) view.findViewById(R.id.EditText03);
+		EditText pin = (EditText) view.findViewById(R.id.EditText04);
+		EditText phone = (EditText) view.findViewById(R.id.EditText05);
+		PopUpFactory.createPopUp(getActivity(), (EditText) view.findViewById(R.id.EditTextState), new String[]{"Chandigarh","Haryana"});
 		PopUpFactory.createPopUp(getActivity(), (EditText) view.findViewById(R.id.EditTextCity), new String[]{"City1","City2","City3","City4","City5","City6","City7","City8"});
 	}
 
@@ -99,6 +105,7 @@ public class AddressFragment extends Fragment implements OnClickListener{
 
 	private boolean validateForm() {
 		// TODO Auto-generated method stub
+		
 		return true;
 	}
 

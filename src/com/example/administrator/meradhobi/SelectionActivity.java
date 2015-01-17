@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -46,6 +47,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	private String personName;
 	private String email;
 	String personPhotoUrl;
+	String id,username,site;
 	// Google client to interact with Google API
 	private GoogleApiClient mGoogleApiClient;
 
@@ -81,19 +83,49 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			getFragmentManager().beginTransaction()
 			.add(R.id.fragment_container, firstFragment).commit();
 		}
-		SignedIn = false;
 
+		SignedIn = false;
+		
 		mGoogleApiClient = new GoogleApiClient.Builder(this)
 		.addConnectionCallbacks(this)
 		.addOnConnectionFailedListener(this).addApi(Plus.API)
 		.addScope(Plus.SCOPE_PLUS_LOGIN).build();
-		//findViewById(R.id.btn_sign_in).setOnClickListener(this);
+
+		findViewById(R.id.btn_sign_in).setOnClickListener(this);
+
+		SharedPreferences storage = getSharedPreferences("USERBASE", 0);
+		id = storage.getString("u_id", "");
+		username = storage.getString("u_name", "");
+		site = storage.getString("u_site", "");
+
+		if(id.length() != 0){
+			if(true)//getProfileInformationFromServer()
+			{
+				Id = id;
+				personName = username;
+				// Update the UI after signin
+				updateUI(true);			
+			}
+			else
+			{
+				Toast.makeText(this, "Unable to get User Info, Login once again...", Toast.LENGTH_LONG).show();
+				signOutFromGplus();
+			}
+		}
+		
+		
 		//In order to avoid network android.os.Network error for making connections from Main Activity
 		if (android.os.Build.VERSION.SDK_INT > 9) {
 			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 			StrictMode.setThreadPolicy(policy);
 		}
 
+	}
+
+
+	private boolean getProfileInformationFromServer() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
@@ -132,7 +164,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			return true;
 		}
 		else if (id == R.id.log_out) {
-			signOutFromGplus();
+			signOut();
 			return true;
 		}
 		else if (id == R.id.user_profile) {
@@ -143,15 +175,26 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			return super.onOptionsItemSelected(item);
 	}
 
+	private void signOut() {
+		signOutFromGplus();
+		SharedPreferences storage = getSharedPreferences("USERBASE", 0);
+    	SharedPreferences.Editor editor = storage.edit();    	
+    	editor.clear();
+    	editor.commit();
+		updateUI(false);
+	}
+
+
 	private void takeToProfile() {
 		// TODO Auto-generated method stub
 		ProfileFragment newFragment = new ProfileFragment();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		Bundle args = new Bundle();
+		args.putString(ProfileFragment.ARG_ID, Id);
 		args.putString(ProfileFragment.ARG_NAME, personName);
-		args.putString(ProfileFragment.ARG_EMAIL, email);
-		args.putString(ProfileFragment.ARG_PHONE, "----------");
-		args.putString(ProfileFragment.ARG_P_URL, personPhotoUrl);
+		//args.putString(ProfileFragment.ARG_EMAIL, email);
+		//args.putString(ProfileFragment.ARG_PHONE, "----------");
+		//args.putString(ProfileFragment.ARG_P_URL, personPhotoUrl);
 		newFragment.setArguments(args);
 		// Replace whatever is in the fragment_container view with this fragment,
 		// and add the transaction to the back stack so the user can navigate back
@@ -232,20 +275,28 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	public void onConnected(Bundle arg0) {
 		mSignInClicked = false;
 		Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
-		
+
 		//If we are already connected before this ,just do nothing
-		//Possibly if(signedIn){		
-		// Get user's information
-		if(getProfileInformation())
-		{
-			// Update the UI after signin
-			updateUI(true);			
+		if(!SignedIn){		
+			// Get user's information
+			if(getProfileInformation())
+			{
+				// Save the userName and id, so user do not have to login every time he opens the app
+				SharedPreferences u_id = getSharedPreferences("USERBASE", 0);
+				SharedPreferences.Editor editor = u_id.edit();
+				editor.putString("u_id", Id);
+				editor.putString("u_name", personName);
+				editor.putString("u_site", "google");
+				editor.commit();
+				// Update the UI after signin
+				updateUI(true);			
+			}
+			else
+			{
+				Toast.makeText(this, "Unable to get User Info, Login once again...", Toast.LENGTH_LONG).show();
+				signOutFromGplus();
+			}
 		}
-		else
-		{
-			Toast.makeText(this, "Unable to get User Info, Login once again...", Toast.LENGTH_LONG).show();
-			signOutFromGplus();
-		}		
 
 	}
 
@@ -303,7 +354,8 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			llProfileLayout.setVisibility(View.VISIBLE);*/
 			SignedIn = true;
 			this.invalidateOptionsMenu();			
-			isNewUser = true;
+			isNewUser = true;//not required
+
 			LoadProfAsyncTask tsk = new LoadProfAsyncTask();
 			tsk.execute(Id);
 
@@ -315,8 +367,6 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			intent.putExtras(b); //Put your id to your next Intent
 			startActivity(intent);
 			finish();*/
-
-
 		} else {
 			/*btnSignIn.setVisibility(View.VISIBLE);
 			btnSignOut.setVisibility(View.GONE);
@@ -325,6 +375,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 
 			//Take to Login Screen
 			// Create a new Fragment to be placed in the activity layout
+			
 			SelectionFragment firstFragment = new SelectionFragment();
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -344,7 +395,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	@Override
 	public void onConnectionSuspended(int arg0) {
 		// mGoogleApiClient.connect();
-		updateUI(false);
+		//updateUI(false);
 
 	}
 
@@ -427,7 +478,6 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
 			mGoogleApiClient.disconnect();
 			mGoogleApiClient.connect();
-			updateUI(false);
 		}
 	}
 
@@ -498,7 +548,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			super.onPostExecute(result);
 			if(result==null)
 			{
-				isNewUser = false;
+				isNewUser = true;
 				Toast.makeText(getApplicationContext(), "NewUser!!!", Toast.LENGTH_SHORT).show();
 				//Take the Person to the Profile Fill Fragment
 				//For now lets just add him
@@ -523,7 +573,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			String Id = arg0[0];
 			String email = arg0[1];
 			String personName = arg0[2];
-			return DhobiDBHelper.signupUser(Id, email, personName);
+			return DhobiDBHelper.signupUser(Id, email, personName,personPhotoUrl);
 		}
 
 		@Override

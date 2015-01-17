@@ -2,7 +2,9 @@ package com.example.administrator.meradhobi;
 
 import java.io.InputStream;
 
-import android.app.Activity;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,14 +12,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 
 public class ProfileFragment extends Fragment{
@@ -26,10 +23,14 @@ public class ProfileFragment extends Fragment{
 	public static final String ARG_NAME = "PERSONNAME";
 	public static final String ARG_PHONE = "PERSONPHONE";
 	public static final String ARG_P_URL = "PERSONPICURL";
+	public static final String ARG_ID = "PERSONID";
 	private String name;
 	private String email;
 	private String Phone;
 	private String picURL;
+	private String id;
+	private TextView email_View;
+	private ImageView profilepicView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -57,6 +58,7 @@ public class ProfileFragment extends Fragment{
 			picURL = args.getString(ARG_P_URL);
 			if(picURL == null)
 				picURL = "";
+			id = args.getString(ARG_ID);
 
 		}
 
@@ -66,10 +68,15 @@ public class ProfileFragment extends Fragment{
 
 	@Override
 	public void onViewCreated(View view, Bundle bundle) {
+		email_View = (TextView)view.findViewById(R.id.TextViewEmail);
 		((TextView)view.findViewById(R.id.TextViewProfile)).setText(name);
-		((TextView)view.findViewById(R.id.TextViewEmail)).setText(email);
+		email_View.setText(email);
 		((TextView)view.findViewById(R.id.TextViewPhone)).setText(Phone);
-		new LoadProfileImage((ImageView) view.findViewById(R.id.imageView1)).execute(picURL);
+		profilepicView = (ImageView) view.findViewById(R.id.imageView1);
+		if(id != null)
+		{				
+			new LoadProfileInfo().execute(id);
+		}
 
 	}
 
@@ -82,7 +89,7 @@ public class ProfileFragment extends Fragment{
 		// below that sets the article text.
 
 	}
-	
+
 	/**
 	 * Background Async task to load user profile picture from url
 	 * */
@@ -109,6 +116,35 @@ public class ProfileFragment extends Fragment{
 		protected void onPostExecute(Bitmap result) {
 			bmImage.setImageBitmap(result);
 		}
+	}
+
+	/**
+	 * Background Async task to load user profile picture from url
+	 * */
+	private class LoadProfileInfo extends AsyncTask<String, Void, JSONObject> {
+
+		protected JSONObject doInBackground(String... id) {
+			String iD = id[0];
+			JSONObject json = DhobiDBHelper.lookForUser(new String[]{"Id",iD});
+			return json;
+		}
+
+		protected void onPostExecute(JSONObject json) {
+			setFields(json);
+		}
+	}
+
+	private void setFields(JSONObject json) {
+		//((TextView)view.findViewById(R.id.TextViewProfile)).setText(name);
+		try {
+			email_View.setText(json.getString("Email"));
+			new LoadProfileImage(profilepicView).execute(json.getString("picURL"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//((TextView)view.findViewById(R.id.TextViewPhone)).setText(Phone);
+
 	}
 
 }

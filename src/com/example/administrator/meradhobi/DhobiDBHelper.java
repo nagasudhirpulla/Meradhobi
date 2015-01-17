@@ -5,11 +5,11 @@ import org.json.JSONObject;
 
 public class DhobiDBHelper {
 
-	public static String signupUser(String Id, String email, String name){
+	public static String signupUser(String Id, String email, String name, String picurl){
 
 		String Res = null;
 		try {
-			Res = CustomHttpClient.executeHttpPost(UrlBuilder.toUrl("googleBase"), new JSONObject().put("Id", Id).put("Email", email).put("displayname", name));
+			Res = CustomHttpClient.executeHttpPost(UrlBuilder.toUrl("googleBase"), new JSONObject().put("Id", Id).put("Email", email).put("displayname", name).put("picURL", picurl));
 			return Res;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -19,10 +19,10 @@ public class DhobiDBHelper {
 		return Res;
 	}
 
-	public static JSONObject lookForUser(String[] params)
+	public static JSONObject lookForUser(String[] iDparam)
 	{
 		try {
-			String response = CustomHttpClient.executeHttpGet(UrlBuilder.paramsToUrl(params, "googleBase"));
+			String response = CustomHttpClient.executeHttpGet(UrlBuilder.paramsToUrl(iDparam, "googleBase"));
 
 			JSONObject json = HttpResponseParser.getField(response,"Id");
 			if(json!=null)
