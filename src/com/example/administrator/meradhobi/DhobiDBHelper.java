@@ -33,4 +33,18 @@ public class DhobiDBHelper {
 		}
 		return null;		
 	}
+
+	public static JSONObject addAddress(String[] iDparam) {
+		try {
+			String response = CustomHttpClient.executeHttpGet(UrlBuilder.paramsToUrl(iDparam, "googleBase"));
+			JSONObject json = HttpResponseParser.getField(response,"Id");
+			if(json!=null)
+				CustomHttpClient.executeHttpPut(UrlBuilder.paramsToUrl(iDparam, "googleBase"), new JSONObject().put("$push", new JSONObject().put("address", "randval")));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;	
+
+	}
 }

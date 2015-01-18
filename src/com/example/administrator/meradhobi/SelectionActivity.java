@@ -413,6 +413,13 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		case 3:
 			takeToOrderDetail();
 			break;
+		case 4:
+			takeToAddressList();
+			break;
+		case 5:
+			if(SignedIn)
+			DhobiDBHelper.addAddress(new String[]{"Id",Id});
+			break;
 		default:
 			break;
 		}
@@ -420,8 +427,19 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 	}
 
 
+	private void takeToAddressList() {
+		AddressListFragment newFragment = new AddressListFragment();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		// Replace whatever is in the fragment_container view with this fragment,
+		// and add the transaction to the back stack so the user can navigate back
+		transaction.add(R.id.fragment_container, newFragment);
+		transaction.addToBackStack(null);
+		// Commit the transaction
+		transaction.commit();		
+	}
+
+
 	private void takeToOrderDetail() {
-		// TODO Auto-generated method stub
 		OrderFragment newFragment = new OrderFragment();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		// Replace whatever is in the fragment_container view with this fragment,
@@ -573,6 +591,7 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 			String Id = arg0[0];
 			String email = arg0[1];
 			String personName = arg0[2];
+			//do upsert instead of insert
 			return DhobiDBHelper.signupUser(Id, email, personName,personPhotoUrl);
 		}
 
@@ -580,8 +599,14 @@ public class SelectionActivity extends Activity implements OnClickListener, Conn
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
+			if(result.length()>0){
 			Toast.makeText(getApplicationContext(), "UserAdded!!!"+result, Toast.LENGTH_SHORT).show();
 			takeToFillAddress();
+			}
+			else
+			{
+				Toast.makeText(getApplicationContext(), "User Addition Failed...", Toast.LENGTH_SHORT).show();
+			}
 		}
 
 	}

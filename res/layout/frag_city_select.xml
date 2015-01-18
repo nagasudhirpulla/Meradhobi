@@ -129,7 +129,7 @@
         android:textColor="#ffffff" />
 
     <Button
-        android:id="@+id/place_order"
+        android:id="@+id/pick_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/TextViewEmail"
@@ -163,10 +163,10 @@
         android:id="@+id/address_proceed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/place_order"
+        android:layout_alignBottom="@+id/pick_address"
         android:layout_alignRight="@+id/editTextName"
-        android:layout_alignTop="@+id/place_order"
-        android:layout_toRightOf="@+id/place_order"
+        android:layout_alignTop="@+id/pick_address"
+        android:layout_toRightOf="@+id/pick_address"
         android:text="PROCEED"
         android:textColor="#ffffff" />
 

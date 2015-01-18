@@ -98,14 +98,28 @@ public class AddressFragment extends Fragment implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		if(validateForm())
-			mCallback.FragmentCall(3);//goto next screen i.e., Order Detail
+		switch(v.getId())
+		{
+		case R.id.address_proceed:
+			if(validateForm())
+			{
+				//just for tesing, it should be done after validation and order placement
+				//mCallback.FragmentCall(5);//add a new address to user if exists
+				
+				mCallback.FragmentCall(3);//goto next screen i.e., Order Detail
+			}
+			break;
+		case R.id.pick_address:
+			mCallback.FragmentCall(4);//goto address list screen
+			break;
+
+		}		
 
 	}
 
 	private boolean validateForm() {
 		// TODO Auto-generated method stub
-		
+
 		return true;
 	}
 
